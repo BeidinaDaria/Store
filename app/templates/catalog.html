@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+
+{% block title %} <title>Каталог</title> {% endblock %}
+
+{% block content %}
+
+<main>
+    <h1>Каталог изобретений</h1>
+</main>
+<span class="catalogue-circles" style="display: none">
+        <button>
+            <a href="#">Все</a>
+        </button>
+        <button>
+            <a href="#">Машины времени</a>
+        </button>
+        <button>
+            <a href="#">Для шпионов</a>
+        </button>
+        <button>
+            <a href="#">Здоровье</a>
+        </button>
+        <button>
+            <a href="#">Транспорт</a>
+        </button>
+        <button>
+            <a href="#">еще</a>
+        </button>
+    </span>
+<form class="catalogue-search">
+    {% if search %}
+    <input type="text" method="GET" name="search" placeholder="Название товара" value="{{ search }}">
+    {% else %}
+    <input type="text" method="GET" name="search" placeholder="Название товара">
+    {% endif %}
+</form>
+<div class="types">
+    <form class="aside" method="GET">
+        <h2>Фильтры</h2>
+        <h3>Цена</h3>
+        <div class="container">
+            <div class="textrange-fields">
+                <input style="width: 36%" class="textrange-field" name="price_from" type="text" id="minprice" placeholder="Мин.">
+                <input style="width: 36%" class="textrange-field" name="price_to" type="text" id="maxprice" placeholder="Макс.">
+            </div>
+
+        </div>
+        <h3>Научная сфера</h3>
+        <div>
+            <label id="physics" class="checkbox">
+                <input type="checkbox" name="sci" for="physics" value="physics">
+                <span class="checkmark"></span>
+                Физика
+            </label>
+            <label id="biology" class="checkbox">
+                <input type="checkbox" name="sci" for="biology" value="biology">
+                <span class="checkmark"></span>
+                Биология
+            </label>
+            <label id="psycho" class="checkbox">
+                <input type="checkbox" name="sci" for="psycho" value="phsychology">
+                <span class="checkmark"></span>
+                Психология
+            </label>
+            <label id="magic" class="checkbox">
+                <input type="checkbox" name="sci" for="magic" value="magic">
+                <span class="checkmark"></span>
+                Магия
+            </label>
+        </div>
+        <h3>Цвет</h3>
+        <div>
+            <label id="black" class="checkbox">
+                <input  type="checkbox" name="color" for="black" value="black">
+                <span class="checkmark"></span>
+                Черный
+            </label>
+            <label id="white" class="checkbox">
+                <input  type="checkbox" name="color" for="white" value="white">
+                <span class="checkmark"></span>
+                Белый
+            </label>
+            <label id="grey" class="checkbox">
+                <input  type="checkbox" name="color" for="grey" value="grey">
+                <span class="checkmark"></span>
+                Серый
+            </label>
+            <label id="blue" class="checkbox">
+                <input  type="checkbox" name="color" for="blue" value="blue">
+                <span class="checkmark"></span>
+                Синий
+            </label>
+            <label id="red" class="checkbox">
+                <input  type="checkbox" name="color" for="red" value="red">
+                <span class="checkmark"></span>
+                Красный
+            </label>
+            <label id="yellow" class="checkbox">
+                <input  type="checkbox" name="color" for="yellow" value="yellow">
+                <span class="checkmark"></span>
+                Желтый
+            </label>
+            <label id="green" class="checkbox">
+                <input  type="checkbox" name="color" for="green" value="green">
+                <span class="checkmark"></span>
+                Зеленый
+            </label>
+            <label id="gold" class="checkbox">
+                <input  type="checkbox" name="color" for="gold" value="gold">
+                <span class="checkmark"></span>
+                Золотой
+            </label>
+            <label id="silver" class="checkbox">
+                <input  type="checkbox" name="color" for="silver" value="silver">
+                <span class="checkmark"></span>
+                Серебрянный
+            </label>
+        </div>
+        <button style="margin-top: 15px" class="itemcomm_submit" type="submit" name="search" value="{% if search %}{{ search }}{% endif %}">Применить</button>
+    </form>
+    <div class="catalog">
+        <h2>Изобретения - {{ items|length }} шт.</h2>
+        <ul class="sortby" style="opacity: 0.2" title="Не реализовано">
+            <li style="font-weight: 700">Сортировка по:</li>
+            <li><a href="">Популярность</a></li>
+            <li><a href="">Цена</a></li>
+            <li><a href="">Рейтинг</a></li>
+        </ul>
+        <div class="wrapper">
+            <div class="values">
+                <span id="range1"></span>
+                <span id="range2"></span>
+            </div>
+        </div>
+        <div class="params">
+            <button id="nav_filter" class="itemcomm_submit" onclick="adaptivFilter()">Открыть фильтры</button>
+            <button class="itemcomm_submit" onclick="location.href='/catalog'">Очистить фильтры</button>
+            <form action="handler.php">
+        </div>
+        <section>
+            <div class="gallery">
+
+                {% if not items %}
+                    <h2>В каталоге по этому запросу ничего не найдено :(</h2>
+                {% endif %}
+
+                {% for item in items %}
+
+                    <div class="card">
+                        <a href="product?id={{ item.id }}">
+                            <img src="/static/img/items/{{ item.images.0 }}" alt="">
+                        </a>
+                        <div>
+                            <a href="product?id={{ item.id }}">
+                                <h4>{{ item.title }}</h4>
+                            </a>
+                            <span class="stars">
+                                <img src="static/img/gui/star.svg" alt="">
+                                <img src="static/img/gui/star.svg" alt="">
+                                <img src="static/img/gui/star.svg" alt="">
+                                <img src="static/img/gui/star.svg" alt="">
+                                <img src="static/img/gui/star.svg" alt="">
+                                <p>4.8</p>
+                            </span>
+                            <span>
+                                <div class="price">
+                                    <p>{{ item.price }} &#8381;</p>
+                                </div>
+                                <div class="icons"> <!-- TODO: Добавить добавление и удаление в корзину и избранное отсюда -->
+                                    <a href='#'> <img src="static/img/gui/telega_small.svg" alt=""> </a>
+                                    <a href='#'><img src="static/img/gui/favourite_small.svg" alt=""> </a>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+        </section>
+    </div>
+</div>
+<div class="notification">
+  <!-- Содержимое окна будет устанавливаться динамически -->
+</div>
+
+{% endblock %}

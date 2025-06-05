@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %} <title>Профиль</title> {% endblock %}
+
+{% block content %}
+
+<script>
+    window.onload = setTimeout(function () {
+        showNotification("Функционал изменения данных пользователя и история покупок в разработке");
+        setTimeout(function () {
+            hideNotification();
+        }, 10000);
+    }, 100);
+</script>
+
+<main>
+    <h1>Ку, {{ user.name }}!</h1>
+</main>
+<div class="types">
+    <div class="catalog catalog2">
+        <form method="post">
+            <span>
+                <h2>Действия с аккаунтом</h2>
+            </span>
+            <button formaction="/logout" class="itemcomm_submit">Выйти</button>
+            <button formaction="/" class="itemcomm_submit">Удалить аккаунт</button>
+        </form>
+            
+        <form class="itemcomm_form" style="margin-top: 5%">
+            <span>
+                <h2>Настройки профиля</h2> <!-- TODO -->
+            </span>
+            <span>
+                <input style="padding: 15px; width: 100%" class="textrange-field" type="text" name="user-name"
+                   placeholder="Имя">
+            </span>
+            <span>
+                <input style="padding: 15px; width: 100%" class="textrange-field" type="text" name="user-surname"
+                    placeholder="Фамилия">
+            </span>
+            <span>
+                <input style="padding: 15px; width: 100%" class="textrange-field" type="email" name="email"
+                    placeholder="E-mail (для получения заказа)">
+            </span>
+            <span>
+                <input type="submit" style="padding: 15px; width: 100%" class="itemcomm_submit" value="Изменить">
+            </span>
+        </form>
+
+        <form class="itemcomm_form" style="margin-top: 5%">
+            <h2>История заказов</h2> <!-- TODO -->
+            <ol class="orders">
+                <li>
+                    <h3>Заказ от 23.03.2009</h3>
+                    <p>Сумма заказа: 2638 руб.</p>
+                    <p>Заказанные товары: Тардис, Летающая машина, Нейрализатор, Машина времени (всего 4 шт.)</p>
+                    <p>Отправлено на почту: <a href="mailto:email666@email.com">email666@email.com</a></p>
+                    <a class="repeat-order" href="#">Повторить заказ</a>
+                </li>
+                <li>
+                    <h3>Заказ от 28.03.2009</h3>
+                    <p>Сумма заказа: 120 руб.</p>
+                    <p>Заказанные товары: Тардис (всего 1 шт.)</p>
+                    <p>Отправлено на почту: <a href="mailto:email666@email.com">email666@email.com</a></p>
+                    <a class="repeat-order" href="#">Повторить заказ</a>
+                </li>
+            </ol>
+        </form>
+
+        <form class="itemcomm_form" style="margin-top: 5%">
+            <span>
+                <h2>Ваши комментарии</h2>
+            </span>
+            <ul class="profilepage_comments">
+
+                {% for comment in user.comments %}
+
+                <li>
+                    <h4 class="profilepage_comment-item"><a href="/product?id={{ comment.item.id }}">{{ comment.item.title }}</a></h4>
+                    <p class="profilepage_comment-text">{{ comment.text }}</p>
+                    <div class="profilepage_comment-metadata">
+                        <span class="profilepage_comment-date">{{ comment.date }}</span>
+                    </div>
+                </li>
+
+                {% endfor %}
+
+            </ul>
+        </form>
+    </div>
+</div>
+<div class="notification">
+    <!-- Содержимое окна будет устанавливаться динамически -->
+</div>
+
+{% endblock %}

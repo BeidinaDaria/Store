@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %} <title>Store</title> {% endblock %}
+
+{% block content %}
+
+<main>
+    <h1>Ищите <b>любые</b> несуществующие изобретения!</h1>
+    <form class="searcher" action="catalog">
+        <select id="searchCharacter">
+            <option>Каталог</option>
+            <option>Избранное</option>
+            <option>Sales</option>
+            <option>Картины</option>
+            <option>Модель</option>
+        </select>
+        <input type="text" method="GET" name="search" placeholder="Название товара" id="search">
+        <button id="search" onclick="searchInfo()"><img src="static/img/gui/arrow.svg"></button>
+    </form>
+    <p>Попробуйте: <a href="/catalog?search=tardis" id="1">tardis</a></p>
+</main>
+<section>
+    <div class="head">
+                <span>
+                    <h3>🛒 Что у нас есть</h3>
+                </span>
+        <button><a href="catalog">Весь каталог</a></button>
+    </div>
+    <div class="gallery">
+
+        {% for item in items %}
+
+            <div class="card">
+                <a href="product?id={{ item.id }}">
+                    <img src="/static/img/items/{{ item.images.0 }}" alt="">
+                </a>
+                <div>
+                    <a href="product?id={{ item.id }}">
+                        <h4>{{ item.title }}</h4>
+                    </a>
+                    <p>{{ item.description[:130] }}…</p>
+                </div>
+            </div>
+
+        {% endfor %}
+
+    </div>
+</section>
+<section>
+    <div class="head">
+                <span>
+                    <h3>🔥 Бестселлеры</h3>
+                </span>
+        <button><a href="catalog">Весь каталог</a></button>
+    </div>
+    <div class="gallery">
+
+        {% for item in best_items %}
+
+            <div class="card">
+                <a href="product?id={{ item.id }}">
+                    <img src="/static/img/items/{{ item.images.0 }}" alt="">
+                </a>
+                <div>
+                    <a href="product?id={{ item.id }}">
+                        <h4>{{ item.title }}</h4>
+                    </a>
+                    <span class="stars">
+                        <img src="static/img/gui/star.svg" alt="">
+                        <img src="static/img/gui/star.svg" alt="">
+                        <img src="static/img/gui/star.svg" alt="">
+                        <img src="static/img/gui/star.svg" alt="">
+                        <img src="static/img/gui/star.svg" alt="">
+                        <p>4.8</p>
+                    </span>
+                    <span>
+                        <div class="price">
+                            <p>{{ item.price }} &#8381;</p>
+                        </div>
+                        <div class="icons">
+                            <a href='#'> <img src="static/img/gui/telega_small.svg" alt=""> </a>
+                            <a href='#'><img src="static/img/gui/favourite_small.svg" alt=""> </a>
+                        </div>
+                    </span>
+                </div>
+            </div>
+
+        {% endfor %}
+
+    </div>
+</section>
+<div class="notification">
+  <!-- Содержимое окна будет устанавливаться динамически -->
+</div>
+
+<script>
+    function searchInfo() {
+        window.location.replace("catalog");
+        let info = document.getElementById("searchCharacter").value + document.getElementById("search").value;
+        let acc = JSON.stringify(info);
+        let request;
+        if (window.XMLHttpRequest) {
+            request = new XMLHttpRequest();
+        } else {
+            request = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        request.open("GET", "/");
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        request.onreadystatechange = function () {
+            if (request.readyState === 4 && request.status == 200) {
+                let catalog = request.response;
+                localStorage.setItem("catalog", catalog);
+            }
+        }
+        request.send("search=" + info);
+    }
+</script>
+
+{% endblock %}

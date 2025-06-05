@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+
+{% block title %} <title>{{ item.title }} - витрина Store</title> {% endblock %}
+
+{% block content %}
+
+<style>
+    main.product-main {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)),
+        url('/static/img/items/{{ item.images.0 }}');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+    }
+
+    main.product-main h1 {
+        background: #fff;
+        border-radius: 20px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+
+    }
+</style>
+<main class="product-main">
+    <h1>{{ item.title }}</h1>
+</main>
+
+<div class="item-container">
+    <span class="flexspan" style="width:100%;">
+        <div class="product item-column1">
+
+        <div class="starsfavimgs">
+            <!-- stars, fav -->
+            <span class="starsnfav">
+                <span class="item-stars">
+                    {% if item.comments %}
+                        {% for _ in range (average | round(0, 'ceil') | int) %}
+                            <img src="static/img/gui/star.svg" alt="">
+                        {% endfor %}
+                        <p>{{ average | round(1, 'ceil') }}</p>
+                    {% endif %}
+                </span>
+                <a href="#reviews">Отзывы: {{ item.comments|length }} шт.</a>
+                <script src="//ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+                <script type=text/javascript>
+
+                    const urlParams = new URLSearchParams(window.location.search);
+                    $(function () {
+                        const id = urlParams.get('id');
+                        const fav = $('div#favBox');
+                        const basket = $('div#basketBox');
+                        const add_fav_url = '/favourites/add';
+                        const remove_fav_url = '/favourites/remove';
+                        const add_basket_url = '/basket/add';
+                        const remove_basket_url = '/basket/remove';
+                        $.fn.changeFavBasket = function (url, box, correctText, incorrectText, newLabel) {
+                            $.ajax({
+                                url: url,
+                                type: 'POST',
+                                data: id,
+                                contentType: 'application/json;charset=UTF-8',
+                                success: function () {
+                                    setTimeout(function () {
+                                        showNotification(correctText + " 👌");
+                                        setTimeout(function () {
+                                            hideNotification();
+                                        }, 4000);
+                                    }, 100);
+                                    box.children('label').text(newLabel);
+                                },
+                                error: function (err) {
+                                    setTimeout(function () {
+                                        showNotification(incorrectText + " 🙈");
+                                        setTimeout(function () {
+                                            hideNotification();
+                                        }, 4000);
+                                    }, 100);
+                                    console.log(err);
+                                }
+                            });
+                        };
+                        fav.children('input').on('change', function () {
+                            if ($(this).is(':checked'))
+                                $.fn.changeFavBasket(add_fav_url, fav,
+                                    "Предмет добавлен в избранное",
+                                    "Не удалось добавить предмет в избранное",
+                                    "В избранном"
+                                );
+                            else
+                                $.fn.changeFavBasket(remove_fav_url, fav,
+                                    "Предмет убран из избранного",
+                                    "Не удалось убрать предмет из избранного",
+                                    "В избранное"
+                                );
+                        })
+                        basket.children('input').on('change', function () {
+                            if ($(this).is(':checked'))
+                                $.fn.changeFavBasket(add_basket_url, basket,
+                                    "Предмет добавлен в корзину",
+                                    "Не удалось добавить предмет в корзину",
+                                    "В корзине"
+                                );
+                            else
+                                $.fn.changeFavBasket(remove_basket_url, basket,
+                                    "Предмет убран из корзины",
+                                    "Не удалось убрать предмет из корзины",
+                                    "В корзину"
+                                );
+                        })
+                    });
+                </script>
+            </span>
+            <!-- imgs -->
+            <span class="item-imgs">
+                <div class="additional">
+                    {% for image in item.images[1:] %}
+                        <img preview src="/static/img/items/{{ image }}" width="100" height="108">
+                    {% endfor %}
+                </div>
+                <img preview src="/static/img/items/{{ item.images.0 }}" width="300" height="333">
+            </span>
+        </div>
+
+            <script>
+                $('img[preview]').addClass('preview').click(function () {
+                    var src = $(this).attr('src');
+                    $('<div>').css({
+                        background: 'RGBA(0,0,0,.5) url(' + src + ') no-repeat center',
+                        backgroundSize: 'contain',
+                        width: '100%', height: '100%',
+                        position: 'fixed',
+                        zIndex: '10000',
+                        top: '0', left: '0',
+                        cursor: 'zoom-out'
+                    }).click(function () {
+                        $(this).remove();
+                    }).appendTo('body');
+                });
+            </script>
+        </div>
+    <aside class="item-column3 product description">
+        <h2><b>Описание</b></h2>
+        <h4>{{ item.description }}</h4>
+    </aside>
+        <aside class="item-column2 product">
+        <div class="characteristics">
+            <div class="characteristic">
+                <span style="padding-top: 3px">Цвет:</span>
+                {% for color in item.colors %}
+                    <span style="background: rgb(164, 255, 144); padding: 3px; margin-left: 5px">{{ color }}</span>
+                {% endfor %}
+            </div>
+            <div class="characteristic">
+                <span style="padding-top: 3px">Сфера:</span>
+                    <span style="padding: 3px; margin-left: 5px">
+                        {% for sci in item.science %} {{ sci }} {% endfor %}
+                    </span>
+            </div>
+            <div class="price-label">{{ item.price }} ₽</div>
+            <div class="favcart" id="basketBox">
+                {% if in_basket %}
+                    <input type="checkbox" id="basket" checked>
+                    <img style="color: rgb(164, 255, 144)" src="static/img/gui/cart.svg">
+                    <label for="basket">В корзине</label>
+                {% else %}
+                    <input type="checkbox" id="basket">
+                    <img style="color: rgb(164, 255, 144)" src="static/img/gui/cart.svg">
+                    <label for="basket">В корзину</label>
+                {% endif %}
+            </div>
+            <div class="favcart" id="favBox">
+                {% if in_fav %}
+                    <input type="checkbox" id="fav" checked>
+                    <img src="static/img/gui/favourite.svg">
+                    <label for="fav">В избранном</label>
+                {% else %}
+                    <input type="checkbox" id="fav">
+                    <img src="static/img/gui/favourite.svg">
+                    <label for="fav">В избранное</label>
+                {% endif %}
+            </div>
+        </div>
+        </aside>
+
+    </span>
+
+    <span class="reviews-container">
+        <aside class="reviews-texts">
+            <div id="reviews" class="reviews">
+                <h2>✨ Отзывы ({{ item.comments|length }})</h2>
+
+                {% for comment in item.comments %}
+
+                    <span class="review-head">
+                        <img class="reviewer-pic" src="static/img/gui/favicon.ico">
+                        <div class="reviewer-name">
+                            <h3>{{ comment.user.name }} <!--{{ comment.user.surname }}--></h3>
+                            <p>{{ comment.date }}</p>
+                            {% for _ in range(comment.score | int) %}
+                                <img src="static/img/gui/star.svg" alt="">
+                            {% endfor %}
+                        </div>
+                    </span>
+                    {% if comment.pros %}
+                        <h3>Преимущества</h3>
+                        <p>{{ comment.pros }}</p>
+                    {% endif %}
+                    {% if comment.cons %}
+                        <h3>Недостатки</h3>
+                        <p>{{ comment.cons }}</p>
+                    {% endif %}
+                    {% if comment.text %}
+                        <h3>Комментарий</h3>
+                        <p>{{ comment.text }} </p>
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+        </aside>
+        <div class="catalog">
+            <h2>Средняя оценка:
+                {% set vars = {'rate': average | round(1, 'ceil') } %}
+                
+                {% if vars['rate'] == 0 %}
+                    <o style="font-weight: 400">ещё не оценено</o> 🙈
+                {% elif vars['rate'] <= 2 %}
+                    👎 {{ vars['rate'] }}
+                {% elif vars['rate'] < 4 %}
+                    👌 {{ vars['rate'] }}
+                {% else %}
+                    👍 {{ vars['rate'] }}
+                {% endif %}
+
+            </h2>
+            <div class="itemcomm_body">
+
+                {% if user %}
+                    <form method="post" class="itemcomm_form">
+                    <h3 class="itemcomm_title">😉 Оставьте свой отзыв, {{ user.name }}</h3>
+                    <div class="itemcomm_formgroup">
+                        <label for="itemcomm_pros" class="itemcomm_label">Преимущества:</label>
+                        <textarea name="pros" id="itemcomm_pros" rows="5"
+                                  class="itemcomm_input itemcomm_textarea"></textarea>
+                        <label for="itemcomm_cons" class="itemcomm_label">Недостатки:</label>
+                        <textarea name="cons" id="itemcomm_cons" rows="5"
+                                  class="itemcomm_input itemcomm_textarea"></textarea>
+                    </div>
+                    <label for="itemcomm_comment" class="itemcomm_label">Комментарий:</label>
+                    <textarea name="text" id="itemcomm_comment" rows="10"
+                              class="itemcomm_input itemcomm_textarea"></textarea>
+                    <label for="itemcomm_rating" class="itemcomm_label">Общая оценка:</label>
+                    <input type="number" name="score" id="itemcomm_rating" min="1" max="5" value="5"
+                           class="itemcomm_input itemcomm_number"/>
+                    <input type="submit" value="Отправить" class="itemcomm_submit"/>
+                </form>
+                {% else %}
+                    <div class="itemcomm_form">
+                    <h3 class="itemcomm_title">Чтобы оставить отзыв, нужно <a href="/login">авторизоваться</a> ✨</h3>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </span>
+</div>
+<div class="notification">
+    <!-- Содержимое окна будет устанавливаться динамически -->
+</div>
+
+{% endblock %}

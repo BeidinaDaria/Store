@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %} <title>Вход</title> {% endblock %}
+
+{% block content %}
+
+<main>
+    <h1>Добро пожаловать!</h1>
+</main>
+<div class="types">
+    <div class="catalog">
+
+        <form class="itemcomm_form" style="margin-top: 5%" method="POST" action="/login">
+            <span>
+                <h2>Вход ✌️</h2>
+            </span>
+            <span>
+                <div>{{ message }}</div>
+            </span>
+            <span>
+                <input style="padding: 15px; width: 100%" class="itemcomm_input" name="email"
+                       placeholder="Адрес электронной почты" type="email" id="email"
+                       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" size="100" required>
+            </span>
+            <span>
+                <input style="padding: 15px; width: 100%" class="itemcomm_input" name="pwd" placeholder="Пароль"
+                       id="pwd" type="password" size="100" required>
+            </span>
+            <span>
+                <input style="width: 100%" class="itemcomm_submit" type="submit" value="Войти">
+            </span>
+            <span>
+                <a class="repeat-order" style="width: 100%; margin: 7px;" href="/signup">
+                    Нет аккаунта? Зарегистрируйтесь! 👋
+                </a>
+            </span>
+        </form>
+    </div>
+</div>
+<div class="notification">
+    <!-- Содержимое окна будет устанавливаться динамически -->
+</div>
+
+{% endblock %}

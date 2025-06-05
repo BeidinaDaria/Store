@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %} <title>Регистрация</title> {% endblock %}
+
+{% block content %}
+
+<main>
+    <h1>Регистрация в страну чудес ✨</h1>
+</main>
+<div class="types">
+    <div class="catalog">
+
+        <form style="margin-top: 5%" class="itemcomm_form" method="POST" action="/signup">
+            <span>
+                <div>{{ message }}</div>
+            </span>
+            <span>
+                <h2>
+                    Регистрация 👍
+                </h2>
+            </span>
+            <span>
+                <input style="padding: 15px; width: 100%" class="itemcomm_input" type="text" placeholder="Имя пользователя" name="username" id="username" required/>
+            </span>
+            <span>
+                <input style="padding: 15px; width: 100%" class="itemcomm_input" type="text" placeholder="Электронная почта" name="email" id="email" required/>
+            </span>
+            <span>
+                <input style="padding: 15px; width: 100%" class="itemcomm_input" type="password" placeholder="Введите пароль" name="pwd" id="pwd" required/>
+            </span>
+            <span>
+                <input style="padding: 15px; width: 100%" class="itemcomm_input" type="password" placeholder="Повторите пароль" name="pwd-repeat" id="pwd-repeat" required/>
+            </span>
+            <span>
+                <input style="width: 100%" class="itemcomm_submit" type="submit" type="submit" value="Зарегистрироваться">
+            </span>
+            <span>
+                <a class="repeat-order" style="width: 100%; margin: 7px;" href="/login">
+                    Есть аккаунт? Войдите 👋
+                </a>
+            </span>
+        </form>
+    </div>
+</div>
+<div class="notification">
+    <!-- Содержимое окна будет устанавливаться динамически -->
+</div>
+
+{% endblock %}
